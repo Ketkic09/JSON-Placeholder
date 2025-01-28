@@ -1,29 +1,59 @@
 const express = require('express');
 const axios = require('axios');
-const https = require('https');
 
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const axiosInstance = axios.create({
-    httpsAgent: new https.Agent({
-        rejectUnauthorized: false, // Disable SSL verification
-    }),
-});
+app.use(express.json());
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
 });
 
-app.get('/', async (req, res) => {
+
+app.get('/fetch-users', async (req, res) => {
     try {
-        const { data } = await axios.get("https://jsonplaceholder.typicode.com/photos");
+        const { data } = await axios.get("https://jsonplaceholder.typicode.com/users");
         console.log(data);
         return res.status(200).json(data);
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        console.error(error);
+        return res.status(error.status).json({ error: 'Internal Server Error' });
     }
 });
+
+app.post('/post-user',async(req,res)=>{
+    try{
+    
+       const response =  await axios.post("https://jsonplaceholder.typicode.com/users",req.body)
+        return res.status(response.status).json(response.data)
+    }catch(error){
+        console.error(error.message);
+        return res.status(error.status).json({ error: 'Internal Server Error' });
+    }
+})
+
+app.put('/update-user/:id',async(req,res)=>{
+    const {id} = req.params;
+    console.log('url: ', process.env.BASE_URL+`/${id}`)
+    try{
+        const response = await axios.put(process.env.BASE_URL+`/${id}`,req.body)
+        return res.status(response.status).json(response.data)
+    }catch(error){
+        console.log(error)
+        return res.status(error.status).json({error:error.statusText})
+    }
+})
+
+app.delete('/delete-user/:id',async(req,res)=>{
+    const {id} = req.params;
+    try{
+        const response = await axios.delete(process.env.BASE_URL+`/${id}`)
+        return res.status(response.status).json(response.data)
+    }catch(error){
+        console.log(error)
+        return res.status(error.status).json({error:error.statusText})
+    }
+})

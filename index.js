@@ -8,10 +8,24 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
+const axiosInstance = axios.create();
+
 app.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
 });
 
+
+axiosInstance.interceptors.response.use(null,async(error)=>{
+    let retries = error.config.__retryCount || 0
+    
+    if(retries>=MAX_RETRIES) return Promise.reject(error);
+
+    retries+=1
+    error.config.__retryCount = retries
+
+    const delay = Math.pow(2,retries-1)*1000
+
+})
 
 app.get('/fetch-users', async (req, res) => {
     try {
@@ -57,3 +71,4 @@ app.delete('/delete-user/:id',async(req,res)=>{
         return res.status(error.status).json({error:error.statusText})
     }
 })
+

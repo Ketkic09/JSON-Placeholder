@@ -61,9 +61,9 @@ How To Use?
 | `name`      | `string` | Name of the user |
 | `username`      | `string` | Username of the user |
 
-#### Update User
+#### Delete User
 ```http
-  DELETE /update-user/:id
+  DELETE /delete-user/:id
 ```
 
  | Description                |

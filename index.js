@@ -26,7 +26,7 @@ axiosInstance.interceptors.response.use(null,async(error)=>{
 
     const delay = Math.pow(2,retries-1)*1000  //exponential backoffs
 
-    console.log(`Retry attempt in ${retries} in ${delay/1000}`)
+    console.log(`Retry attempt in ${retries} in ${delay/1000} seconds`)
 
     await new Promise(resolve=>setTimeout(resolve,delay)) //delay before new try
 
@@ -39,7 +39,6 @@ app.get('/fetch-users', async (req, res) => {
         const { data } = await axiosInstance.get(process.env.BASE_URL);
         return res.status(200).json(data);
     } catch (error) {
-        console.error(error);
         if(error.response){
             return res.status(error.response.status).json({status:error.response.status,error:error.response.statusText})
         }
@@ -52,7 +51,6 @@ app.post('/post-user',async(req,res)=>{
        const response =  await axiosInstance.post(process.env.BASE_URL,req.body)
         return res.status(response.status).json(response.data)
     }catch(error){
-        console.error(error.message);
         if (error.response) {
             return res.status(error.response.status).json({
                 status:error.response.status || 500, 
@@ -71,7 +69,6 @@ app.put('/update-user/:id',async(req,res)=>{
         const response = await axiosInstance.put(process.env.BASE_URL+`/${id}`,req.body)
         return res.status(response.status).json(response.data)
     }catch(error){
-        console.log(error.response)
         if (error.response) {
             return res.status(error.response.status).json({
                 status:error.response.status || 500, 
@@ -85,7 +82,6 @@ app.put('/update-user/:id',async(req,res)=>{
 
 app.delete('/delete-user/:id',async(req,res)=>{
     const {id} = req.params;
-    console.log("URL: ",process.env.BASE_URL+`/${id}`)
     try{
 
         const userPresent = await axiosInstance.get(process.env.BASE_URL+`/${id}`) //to check if the user to be deleted is present

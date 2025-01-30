@@ -67,7 +67,7 @@ app.post('/post-user',async(req,res)=>{
 app.put('/update-user/:id',async(req,res)=>{
     const {id} = req.params;
     try{
-        const userPresent = await axiosInstance.get(process.env.BASE_URL+`/${id}`) //to check if the user to be deleted is present
+        const userPresent = await axiosInstance.get(process.env.BASE_URL+`/${id}`) //to check if the user to be updated is present
         const response = await axiosInstance.put(process.env.BASE_URL+`/${id}`,req.body)
         return res.status(response.status).json(response.data)
     }catch(error){
